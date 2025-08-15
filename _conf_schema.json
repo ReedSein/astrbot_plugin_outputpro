@@ -1,0 +1,50 @@
+{
+    "at_prob": {
+        "description": "@发送者概率",
+        "type": "float",
+        "hint": "当消息中包含文本时，按概率@发送者。, 请提前关闭Astrbot自动的At功能",
+        "default": 0.001
+    },
+    "reply_prob": {
+        "description": "引用回复概率",
+        "type": "float",
+        "hint": "当回复消息中包含文本时，按概率引用回复。 请提前关闭Astrbot自动的Reply功能",
+        "default": 0.1
+    },
+    "clean_emoji": { 
+        "description": "清理emoji",
+        "type": "bool",
+        "hint": "清理文本中的emoji，对喜欢发emoji的模型有奇效（比如智谱）",
+        "default": true
+    },
+    "clean_text_length": {
+        "description": "文本清理长度阈值",
+        "type": "int",
+        "hint": "多少个字符以下时执行文本清理，可以防止对长文本误清理",
+        "default": 150
+    },
+    "clean_punctuation": {
+        "type": "string",
+        "description": "需要清理的特殊符号",
+        "hint": "填写正则表达式，例如：[#%~。]",
+        "default": "[%~。]"
+    },
+    "remove_lead": {
+        "type": "list",
+        "description": "去除指定开头字符, 对某些喜欢输出前缀的模型有奇效",
+        "hint": "",
+        "default": [
+            "阿苗",
+            "print"
+        ]
+    },
+    "error_keywords": {
+        "description": "需要拦截的错误关键字列表",
+        "hint": "消息内容中包含列表中任一关键字时，消息将被拦截",
+        "type": "list",
+        "default": [
+            "请求失败",
+            "出现异常"
+        ]
+    }
+}
