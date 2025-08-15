@@ -26,8 +26,7 @@ class BetterIOPlugin(Star):
         super().__init__(context)
         self.conf = config
 
-
-    @filter.on_decorating_result(priority=1)
+    @filter.on_decorating_result(priority=15)
     async def on_message(self, event: AstrMessageEvent):
         """发送消息前的预处理"""
         # 拦截错误信息(根据关键词拦截)
@@ -38,7 +37,12 @@ class BetterIOPlugin(Star):
             result.get_plain_text() if hasattr(result, "get_plain_text") else ""
         )
         matched_keyword = next(
-            (keyword for keyword in self.conf["error_keywords"] if keyword in message_str), None
+            (
+                keyword
+                for keyword in self.conf["error_keywords"]
+                if keyword in message_str
+            ),
+            None,
         )
         if matched_keyword:
             try:
@@ -90,5 +94,3 @@ class BetterIOPlugin(Star):
                 and end_seg.text.strip()
             ):
                 chain.insert(0, Reply(id=message_id))
-
-
