@@ -11,7 +11,7 @@
         "hint": "当回复消息中包含文本时，按概率引用回复。 请提前关闭Astrbot自动的Reply功能",
         "default": 0.1
     },
-    "clean_emoji": { 
+    "clean_emoji": {
         "description": "清理emoji",
         "type": "bool",
         "hint": "清理文本中的emoji，对喜欢发emoji的模型有奇效（比如智谱）",
@@ -31,20 +31,24 @@
     },
     "remove_lead": {
         "type": "list",
-        "description": "去除指定开头字符, 对某些喜欢输出前缀的模型有奇效",
-        "hint": "",
+        "description": "去除指定开头字符",
+        "hint": "对某些喜欢输出前缀的模型有奇效",
         "default": [
             "阿苗",
             "print"
         ]
     },
     "error_keywords": {
-        "description": "需要拦截的错误关键字列表",
+        "description": "需要拦截的关键字列表",
         "hint": "消息内容中包含列表中任一关键字时，消息将被拦截",
         "type": "list",
         "default": [
             "请求失败",
-            "出现异常"
+            "出现异常",
+            "抱歉",
+            "您好",
+            "请稍后",
+            "隐私政策"
         ]
     }
 }
