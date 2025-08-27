@@ -38,6 +38,12 @@
             "print"
         ]
     },
+    "intercept_error": {
+        "description": "拦截报错",
+        "type": "bool",
+        "hint": "注意关闭时仅bot管理员能接收报错，其他人是永久拦截报错的",
+        "default": true
+    },
     "error_keywords": {
         "description": "需要拦截的关键字列表",
         "hint": "消息内容中包含列表中任一关键字时，消息将被拦截",

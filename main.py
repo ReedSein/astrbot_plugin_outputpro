@@ -1,6 +1,9 @@
+
 import random
 import re
+from typing import Any
 import emoji
+from pydantic import BaseModel
 from astrbot.api.event import filter
 from astrbot import logger
 from astrbot.api.star import Context, Star, register
@@ -15,11 +18,29 @@ from astrbot.core.message.components import (
 )
 
 
+
+class GroupState(BaseModel):
+    gid: str
+    last_chain: Any = ""
+    # 未来的拓展属性
+
+class StateManager:
+    """内存状态管理"""
+
+    _groups: dict[str, GroupState] = {}
+
+    @classmethod
+    def get_group(cls, gid: str) -> GroupState:
+        if gid not in cls._groups:
+            cls._groups[gid] = GroupState(gid=gid)
+        return cls._groups[gid]
+
+
 @register(
     "astrbot_plugin_outputpro",
     "Zhalslar",
     "输出增强插件：报错拦截、文本清洗、随机@、随机引用",
-    "1.0.0"
+    "1.0.1",
 )
 class BetterIOPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
@@ -29,34 +50,36 @@ class BetterIOPlugin(Star):
     @filter.on_decorating_result(priority=15)
     async def on_message(self, event: AstrMessageEvent):
         """发送消息前的预处理"""
-        # 拦截错误信息(根据关键词拦截)
+        # 过滤空消息
         result = event.get_result()
-        if not result:
-            return
-        message_str = (
-            result.get_plain_text() if hasattr(result, "get_plain_text") else ""
-        )
-        matched_keyword = next(
-            (
-                keyword
-                for keyword in self.conf["error_keywords"]
-                if keyword in message_str
-            ),
-            None,
-        )
-        if matched_keyword:
-            try:
-                event.set_result(event.plain_result(""))
-                logger.debug("已将回复内容替换为空消息")
-            except AttributeError:
-                event.stop_event()
-                logger.debug("不支持 set_result，尝试使用 stop_event 阻止消息发送")
+        chain = result.chain
+        if not chain:
+            event.stop_event()
             return
 
-        # 过滤不支持的消息类型
-        chain = event.get_result().chain
-        if not chain:
+        gid: str = event.get_group_id()
+        g: GroupState = StateManager.get_group(gid)
+
+        # 拦截重复消息
+        if chain == g.last_chain:
+            event.stop_event()
             return
+        g.last_chain = chain.copy()
+
+        # 拦截错误信息(根据关键词拦截)
+        if self.conf["intercept_error"] or not event.is_admin():
+            err_str = result.get_plain_text() if hasattr(result, "get_plain_text") else ""
+            if next(
+                (keyword for keyword in self.conf["error_keywords"] if keyword in err_str),
+                None,
+            ):
+                event.set_result(event.plain_result(""))
+                logger.debug("已将阻止 error 消息发送到聊天栏")
+                event.stop_event()
+                return
+
+
+        # 过滤不支持的消息类型
         if not all(isinstance(comp, (Plain, Image, Face)) for comp in chain):
             return
 
