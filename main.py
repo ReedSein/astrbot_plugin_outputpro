@@ -1,7 +1,5 @@
-
 import random
 import re
-from typing import Any
 import emoji
 from pydantic import BaseModel
 from astrbot.api.event import filter
@@ -18,11 +16,11 @@ from astrbot.core.message.components import (
 )
 
 
-
 class GroupState(BaseModel):
     gid: str
-    last_chain: Any = ""
+    last_msg: str = ""
     # 未来的拓展属性
+
 
 class StateManager:
     """内存状态管理"""
@@ -61,23 +59,31 @@ class BetterIOPlugin(Star):
         g: GroupState = StateManager.get_group(gid)
 
         # 拦截重复消息
-        if chain == g.last_chain:
+        if chain == g.last_msg:
             event.stop_event()
             return
-        g.last_chain = chain.copy()
+        g.last_msg = event.message_str
 
         # 拦截错误信息(根据关键词拦截)
         if self.conf["intercept_error"] or not event.is_admin():
-            err_str = result.get_plain_text() if hasattr(result, "get_plain_text") else ""
+            err_str = (
+                result.get_plain_text() if hasattr(result, "get_plain_text") else ""
+            )
             if next(
-                (keyword for keyword in self.conf["error_keywords"] if keyword in err_str),
+                (
+                    keyword
+                    for keyword in self.conf["error_keywords"]
+                    if keyword in err_str
+                ),
                 None,
             ):
-                event.set_result(event.plain_result(""))
-                logger.debug("已将阻止 error 消息发送到聊天栏")
-                event.stop_event()
+                try:
+                    event.set_result(event.plain_result(""))
+                    logger.debug("已将回复内容替换为空消息")
+                except AttributeError:
+                    event.stop_event()
+                    logger.debug("不支持 set_result，尝试使用 stop_event 阻止消息发送")
                 return
-
 
         # 过滤不支持的消息类型
         if not all(isinstance(comp, (Plain, Image, Face)) for comp in chain):
