@@ -1,0 +1,48 @@
+{
+    "clean_emoji": {
+        "description": "清理emoji",
+        "type": "bool",
+        "hint": "清理文本中的emoji，对喜欢发emoji的模型有奇效（比如智谱）",
+        "default": true
+    },
+    "clean_text_length": {
+        "description": "文本清理长度阈值",
+        "type": "int",
+        "hint": "多少个字符以下时执行文本清理，可以防止对长文本误清理",
+        "default": 150
+    },
+    "clean_punctuation": {
+        "type": "string",
+        "description": "需要清理的特殊符号",
+        "hint": "填写正则表达式，例如：[#%~。]",
+        "default": "[%~。]"
+    },
+    "remove_lead": {
+        "type": "list",
+        "description": "去除指定开头字符",
+        "hint": "对某些喜欢输出前缀的模型有奇效",
+        "default": [
+            "阿苗",
+            "print"
+        ]
+    },
+    "intercept_error": {
+        "description": "拦截报错",
+        "type": "bool",
+        "hint": "注意关闭时仅bot管理员能接收报错，其他人是永久拦截报错的",
+        "default": true
+    },
+    "error_keywords": {
+        "description": "需要拦截的关键字列表",
+        "hint": "消息内容中包含列表中任一关键字时，消息将被拦截",
+        "type": "list",
+        "default": [
+            "请求失败",
+            "出现异常",
+            "抱歉",
+            "您好",
+            "请稍后",
+            "隐私政策"
+        ]
+    }
+}
