@@ -1,0 +1,50 @@
+{
+        "enable_cot_failsafe": {
+            "type": "boolean",
+            "title": "启用CoT最终防线 (保底机制)",
+            "description": "【重要】与IntelligentRetryWithCoT插件配合使用。开启后，此插件将作为最后一道防线，拦截任何意外泄露的、包含<罗莎内心OS>的原始回复。",
+            "default": true
+        },
+        "intercept_error": {
+            "type": "boolean",
+            "title": "拦截错误信息",
+            "description": "根据下方的错误关键词列表，拦截包含这些词语的回复。",
+            "default": true
+        },
+        "error_keywords": {
+            "type": "string",
+            "title": "错误关键词列表 (每行一个)",
+            "description": "当回复包含这些词语时，将被拦截。不区分大小写。",
+            "default": "error\n错误\n失败"
+        },
+        "clean_text_length": {
+            "type": "integer",
+            "title": "文本清洗最大长度",
+            "description": "只对长度小于此值的纯文本消息进行清洗，以避免处理大段文字。",
+            "default": 100
+        },
+        "clean_emoji": {
+            "type": "boolean",
+            "title": "清洗Emoji表情",
+            "description": "从回复中移除所有的Emoji表情符号。",
+            "default": true
+        },
+        "clean_punctuation": {
+            "type": "string",
+            "title": "清洗标点符号 (正则表达式)",
+            "description": "使用正则表达式移除指定的标点符号。",
+            "default": "[~&@#%]"
+        },
+        "remove_lead": {
+            "type": "array",
+            "title": "移除指定开头字符",
+            "description": "如果回复以列表中的某个词语开头，则移除它。",
+            "items": {
+                "type": "string"
+            },
+            "default": [
+                "好的，",
+                "当然，"
+            ]
+        }
+    }
